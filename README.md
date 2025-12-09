@@ -4,7 +4,8 @@
 
 [![Docker](https://img.shields.io/badge/Docker-Ready-blue?logo=docker)](https://www.docker.com/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-4.0.1-blue.svg)](https://github.com/leowinfy/10mins/releases)
+[![Version](https://img.shields.io/badge/Version-4.1.7-blue.svg)](https://github.com/leowinfy/10mins/releases)
+[![Author](https://img.shields.io/badge/Author-leowinfy-purple.svg)](https://github.com/leowinfy)
 
 ## 📖 关于「每天十分钟」
 
@@ -53,34 +54,11 @@
 - **响应式设计** - 手机、平板、电脑完美适配
 - **移动端优化** - 触屏友好，随时随地记录
 
-## 🛠️ 技术栈
+## 🚀 部署指南
 
-### 核心技术
+### 🐳 Docker 部署（推荐）
 
-- **前端框架**: Next.js 15 (App Router)
-- **UI框架**: React 19
-- **样式**: Tailwind CSS
-- **编辑器**: Vditor 3.11.2 (浏览器端的 Markdown 编辑器)
-- **类型安全**: TypeScript
-
-### 存储方案
-
-- **数据存储**: 本地文件系统 (JSON格式)
-- **图片存储**: 本地文件系统
-- **文件上传**: Multer
-
-### 开发工具
-
-- **代码规范**: ESLint
-- **包管理**: npm
-- **测试框架**: Jest, Playwright
-- **自动化测试**: 完整的测试套件覆盖
-
-## 🚀 快速开始
-
-### 🐳 Docker 部署（最简单）
-
-> 推荐使用 Docker，一键启动，无需配置环境
+#### 标准部署
 
 ```bash
 # 克隆项目
@@ -94,11 +72,7 @@ docker-compose up -d
 # 浏览器打开 http://localhost:3000
 ```
 
-就这么简单！您的日记应用已经运行起来了 🎉
-
-### 📦 手动部署
-
-如果您想手动部署：
+#### 手动Docker部署
 
 ```bash
 # 构建镜像
@@ -108,9 +82,64 @@ docker build -t 10mins .
 docker run -d -p 3000:3000 -v 10mins-data:/app/data --name 10mins-diary 10mins
 ```
 
-### 💻 本地开发
+### 🏠 NAS设备部署（极空间、群晖、威联通等）
 
-如果您是开发者，想在本地运行：
+**⚠️ 重要提示：**
+- **请使用 root 版本镜像**：`leowinfy/10mins:root`
+- 普通版本会因权限问题无法正常使用
+
+#### 方法一：Docker Compose（推荐）
+
+```bash
+# 使用NAS专用配置
+docker-compose -f docker-compose.nas-root.yml up -d
+```
+
+#### 方法二：图形界面配置
+
+1. **下载镜像**
+   - 在Docker管理界面下载：`leowinfy/10mins:root`
+
+2. **创建容器**
+   - 镜像选择：`leowinfy/10mins:root`
+   - 端口映射：`3000:3000`
+
+3. **目录挂载配置**
+   ```
+   容器路径 → 主机路径（示例）
+   /app/data → /docker/10mins/data
+   /app/backups → /docker/10mins/backups
+   ```
+   **重要**：取消勾选"只读"选项
+
+4. **环境变量**
+   ```
+   NODE_ENV=production
+   DATABASE_URL=file:./data/db/diaries.json
+   UPLOAD_DIR=/app/data/uploads
+   ```
+
+#### 方法三：自动部署脚本
+
+```bash
+# 赋予执行权限
+chmod +x deploy-nas.sh
+
+# 自动检测并部署
+./deploy-nas.sh
+```
+
+### 🌐 云服务器部署
+
+支持部署到任何支持 Docker 的云服务器：
+
+- 阿里云 ECS
+- 腾讯云 CVM
+- AWS EC2
+- DigitalOcean
+- Vultr
+
+### 💻 本地开发
 
 **环境要求**
 - Node.js 18 或更高版本
@@ -134,25 +163,32 @@ docker run -d -p 3000:3000 -v 10mins-data:/app/data --name 10mins-diary 10mins
    npm run dev
    ```
 
-4. **开始写作**
-
+4. **访问应用**
    打开浏览器访问 http://localhost:3000
 
-### 📱 部署到云服务器
+## 🛠️ 技术栈
 
-支持部署到任何支持 Docker 的云服务器：
+### 核心技术
+- **前端框架**: Next.js 15 (App Router)
+- **UI框架**: React 19
+- **样式**: Tailwind CSS
+- **编辑器**: Vditor 3.11.2 (浏览器端的 Markdown 编辑器)
+- **类型安全**: TypeScript
 
-- 阿里云 ECS
-- 腾讯云 CVM
-- AWS EC2
-- DigitalOcean
-- Vultr
+### 存储方案
+- **数据存储**: 本地文件系统 (JSON格式)
+- **图片存储**: 本地文件系统
+- **文件上传**: Multer
 
-只需确保您的服务器安装了 Docker，然后运行上述 Docker 命令即可。
+### 开发工具
+- **代码规范**: ESLint
+- **包管理**: npm
+- **测试框架**: Jest, Playwright
+- **自动化测试**: 完整的测试套件覆盖
 
 ## 📖 使用指南
 
-### 写日记
+### 写日记流程
 
 1. 点击"写日记"按钮
 2. 输入标题 - 您可以选择性地修改发布时间
@@ -167,7 +203,6 @@ docker run -d -p 3000:3000 -v 10mins-data:/app/data --name 10mins-diary 10mins
 ### 编辑器功能
 
 #### Vditor Markdown编辑器
-
 - **多种编辑模式** - 支持即时渲染（IR）、所见即所得（WYSIWYG）和分屏预览模式
 - **GitHub风格** - 完全兼容 GitHub Flavored Markdown (GFM)
 - **实时预览** - 编辑时可随时切换到预览模式
@@ -194,7 +229,6 @@ docker run -d -p 3000:3000 -v 10mins-data:/app/data --name 10mins-diary 10mins
 ```
 
 ### 图片上传
-
 - **支持格式**: JPG, PNG, GIF, WebP
 - **文件大小**: 最大5MB
 - **上传方式**:
@@ -203,29 +237,11 @@ docker run -d -p 3000:3000 -v 10mins-data:/app/data --name 10mins-diary 10mins
   - 点击工具栏"📷 上传图片"按钮
 
 ### 数据管理
-
-#### 自动备份
-
-- 每次修改数据时自动创建备份
-- 备份文件位置：`data/db/backup-*.json`
-- 自动清理30天前的旧备份
-
-#### 手动备份
-
-```bash
-# Linux/Mac
-./scripts/backup.sh
-
-# Windows
-scripts\backup.bat
-```
-
-#### 数据导出
-
-1. 在日记列表页面点击"导出"按钮
-2. 选择导出格式：
-   - **JSON格式** - 包含完整数据和元数据，便于备份
-   - **Markdown格式** - 纯文本，便于阅读和迁移
+- **自动备份**: 每次修改数据时自动创建备份，保留30天
+- **手动备份**:
+  - Linux/Mac: `./scripts/backup.sh`
+  - Windows: `scripts\backup.bat`
+- **数据导出**: 在日记列表页面点击"导出"按钮，支持JSON和Markdown格式
 
 ## 📁 项目结构
 
@@ -238,40 +254,27 @@ scripts\backup.bat
 │   │   │   ├── upload/      # 图片上传API
 │   │   │   └── export/      # 数据导出API
 │   │   ├── diary/           # 日记相关页面
-│   │   │   ├── [id]/        # 日记详情页
-│   │   │   │   └── edit/    # 编辑页面
-│   │   │   └── new/         # 新建页面
 │   │   ├── diaries/         # 日记列表页
 │   │   ├── globals.css      # 全局样式
 │   │   ├── layout.tsx       # 根布局
 │   │   └── page.tsx         # 首页
 │   ├── components/          # React组件
 │   │   ├── editor/          # 编辑器组件
-│   │   │   └── DiaryEditorVditor.tsx     # Vditor Markdown编辑器
-│   │   ├── MarkdownRendererVditor.tsx    # Vditor内容渲染组件
 │   │   ├── ui/              # 基础UI组件
-│   │   ├── diary-card/      # 日记卡片组件
-│   │   ├── mobile-menu/     # 移动端菜单
-│   │   └── Header.tsx       # 页面头部
+│   │   └── ...              # 其他组件
 │   ├── lib/                 # 工具函数
 │   │   ├── db.ts           # 数据库操作（文件系统）
 │   │   ├── storage.ts      # 文件存储管理
-│   │   ├── markdown-converter.ts  # Markdown/HTML转换
 │   │   └── utils.ts        # 通用工具函数
 │   └── types/              # TypeScript类型定义
-│       └── diary.ts        # 日记类型
 ├── data/                   # 数据存储目录
 │   ├── db/                # 数据库文件
-│   │   ├── diaries.json   # 主数据文件
-│   │   └── backup-*.json  # 备份文件
 │   └── uploads/           # 上传的图片
-├── scripts/               # 脚本文件
-│   ├── backup.sh          # Linux/Mac备份脚本
-│   └── backup.bat         # Windows备份脚本
+├── docs/                   # 文档目录
 ├── public/               # 静态资源
 ├── docker-compose.yml    # Docker Compose配置
+├── docker-compose.nas-root.yml  # NAS部署配置
 ├── Dockerfile           # Docker镜像构建文件
-├── .dockerignore        # Docker忽略文件
 └── package.json         # 项目配置
 ```
 
@@ -303,63 +306,6 @@ Docker部署时的数据卷挂载：
 volumes:
   - 10mins-data:/app/data  # 持久化存储数据和图片
 ```
-
-## 🔒 安全说明
-
-1. **图片上传安全**
-   
-   - 文件类型验证
-   - 文件大小限制（5MB）
-   - 安全的文件名处理
-
-2. **数据安全**
-   
-   - 定期自动备份
-   - 备份文件自动清理
-   - 建议定期导出数据存档
-
-## 🚀 快速开始
-
-### 一键部署（推荐）
-
-使用 Docker Compose 一键部署：
-
-```bash
-# 克隆项目
-git clone https://github.com/yourusername/10mins.git
-cd 10mins
-
-# 启动服务
-docker-compose up -d
-
-# 访问应用
-# 浏览器打开 http://localhost:3000
-```
-
-### 本地开发
-
-1. **克隆项目**
-   
-   ```bash
-   git clone https://github.com/yourusername/10mins.git
-   cd 10mins
-   ```
-
-2. **安装依赖**
-   
-   ```bash
-   npm install
-   ```
-
-3. **启动开发服务器**
-   
-   ```bash
-   npm run dev
-   ```
-
-4. **访问应用**
-   
-   打开浏览器访问 http://localhost:3000（或控制台显示的端口）
 
 ## ❓ 常见问题
 
@@ -457,56 +403,28 @@ JPG、PNG、GIF、WebP 等主流格式，单个文件最大 5MB
 - **JSON 格式**：包含完整数据，方便备份
 - **Markdown 格式**：纯文本，方便迁移
 
-### 🚨 故障排除
-
-**Q: 编辑器加载失败？**
-1. 检查网络连接
-2. 刷新页面重试
-3. 清除浏览器缓存
-
-**Q: 图片上传失败？**
-1. 检查图片格式（支持 JPG/PNG/GIF/WebP）
-2. 确保图片大小不超过 5MB
-3. 检查网络连接
-
-**Q: 找不到历史记录？**
-1. 确认数据目录 `data/db/diaries.json` 是否存在
-2. Docker 用户检查数据卷是否正确挂载
-3. 查看控制台错误日志
-
 ## 🛠️ 开发指南
 
 ### 开发环境设置
 
-1. **安装依赖**
-   
-   ```bash
-   npm install
-   ```
+```bash
+# 安装依赖
+npm install
 
-2. **启动开发服务器**
-   
-   ```bash
-   npm run dev
-   ```
+# 启动开发服务器
+npm run dev
 
-3. **代码检查**
-   
-   ```bash
-   npm run lint
-   ```
+# 代码检查
+npm run lint
 
-4. **构建生产版本**
-   
-   ```bash
-   npm run build
-   npm start
-   ```
+# 构建生产版本
+npm run build
+npm start
+```
 
 ### 添加新功能
 
 1. 创建新组件：
-   
    ```typescript
    // src/components/NewComponent/index.tsx
    export default function NewComponent() {
@@ -515,11 +433,10 @@ JPG、PNG、GIF、WebP 等主流格式，单个文件最大 5MB
    ```
 
 2. 添加API路由：
-   
    ```typescript
    // src/app/api/new-feature/route.ts
    import { NextRequest, NextResponse } from 'next/server'
-   
+
    export async function GET(request: NextRequest) {
      // 处理逻辑
    }
@@ -527,9 +444,15 @@ JPG、PNG、GIF、WebP 等主流格式，单个文件最大 5MB
 
 3. 更新相关页面，导入并使用新组件
 
-## 🧪 测试
+### 代码规范
+- 使用TypeScript编写所有代码
+- 遵循ESLint规则
+- 组件使用PascalCase命名
+- 文件和目录使用camelCase命名
+- 导出使用默认导出
+- 新功能必须包含对应的测试用例
 
-### 运行测试
+## 🧪 测试
 
 项目包含完整的自动化测试套件：
 
@@ -547,137 +470,55 @@ npm run test:e2e          # E2E测试
 npm run test:coverage
 ```
 
-### 测试覆盖范围
-
+测试覆盖范围：
 - **API测试**: 所有CRUD操作、搜索功能、文件上传
 - **组件测试**: 编辑器功能、用户交互
 - **集成测试**: 完整工作流、并发操作
 - **E2E测试**: 真实浏览器环境下的用户场景
 - **安全性测试**: XSS防护、文件类型验证、输入清理
 
-### 手动测试脚本
+## 📦 版本管理
+
+### 版本信息
+- 当前版本：**v4.1.7**
+- 作者：**leowinfy**
+- 许可证：**MIT License**
+
+### 版本相关命令
 
 ```bash
-# 运行综合功能测试
-node tests/comprehensive-test.cjs
+# 查看当前版本
+npm run version
 
-# 运行图片上传专项测试
-node tests/image-upload-test.cjs
+# 构建Docker镜像（包含版本标签）
+npm run docker:build
+
+# 为Docker镜像打latest标签
+npm run docker:tag
+
+# 推送镜像到Docker Hub
+npm run docker:push
+
+# 发布新版本（自动更新版本号、构建和推送）
+npm run release
 ```
 
-### 测试说明
-
-项目包含完善的自动化测试框架，特别针对编辑器功能：
-
-- **Vditor编辑器测试**: 验证编辑器基本功能、图片上传、内容渲染等
-- **编辑器集成测试**: 验证编辑器与系统的集成
-- **安全性测试**: XSS防护、输入清理、文件上传安全
-
-运行测试：
-
-```bash
-# 测试Vditor编辑器
-npm run test:components
-
-# 查看测试覆盖率
-npm run test:coverage
-```
-
-### 代码规范
-
-- 使用TypeScript编写所有代码
-- 遵循ESLint规则
-- 组件使用PascalCase命名
-- 文件和目录使用camelCase命名
-- 导出使用默认导出
-- 新功能必须包含对应的测试用例
+### Docker镜像标签
+- `leowinfy/10mins:v4.1.7` - 具体版本
+- `leowinfy/10mins:latest` - 最新版本
+- `leowinfy/10mins:root` - NAS专用root版本
 
 ## 🔄 更新日志
 
-### v4.0.1 (2025-12-09)
+### v4.1.7 (2025-12-09)
 
-- ✅ 修复编辑器快速插入按钮导致自动退出的问题
-- ✅ 优化内容插入逻辑，使用 insertValue 替代 setValue
-- ✅ 改进事件处理，阻止事件冒泡
-- ✅ 确保插入内容后编辑器保持焦点
+- ✅ 修复极空间NAS无限重启问题
+- ✅ 创建root版本镜像，彻底解决NAS权限问题
+- ✅ 改进启动脚本权限处理，遇到权限问题不再退出
+- ✅ 添加权限自动修复机制（chmod 666）
+- ✅ 清理无用配置文件，简化部署流程
 
-### v4.0.0 (2025-12-09)
-
-- ✅ 品牌升级：从"我的日记"升级为"每天十分钟"
-- ✅ 新增5种精美主题配色方案（清新绿、海洋蓝、落日橙、优雅紫、暗夜模式）
-- ✅ 实现主题持久化存储，自动记住用户选择
-- ✅ 优化首页设计，突出"十分钟"核心概念
-- ✅ 改进记录预览可读性，保留换行格式
-- ✅ 修复暗色模式下的文字对比度问题
-- ✅ 解决服务端渲染水合错误
-- ✅ 优化所有主题下的视觉体验和可用性
-
-### v3.0.0 (2025-12-09)
-
-- ✅ 集成 Vditor 3.11.2 作为主要 Markdown 编辑器
-- ✅ 支持即时渲染（IR）模式，提供所见即所得的编辑体验
-- ✅ 新增编辑/预览模式一键切换功能
-- ✅ 支持数学公式、图表、流程图等高级 Markdown 功能
-- ✅ 内置大纲导航和全文搜索功能
-- ✅ 支持多种内容主题切换（微信、Light、Dark、Ant Design等）
-- ✅ 优化图片上传体验，支持拖拽、粘贴等多种方式
-- ✅ 更新内容渲染组件，使用 Vditor.preview 统一渲染
-- ✅ 添加快速插入工具栏，提升编辑效率
-- ✅ 完善 TypeScript 类型定义，提升开发体验
-
-### v2.0.0 (2025-12-08)
-
-- ✅ 完全重构编辑器系统，采用纯净的 Markdown 编辑器
-- ✅ 使用 @uiw/react-md-editor，提供 GitHub 风格的编辑体验
-- ✅ 移除所有富文本编辑器，避免 HTML 代码冗余
-- ✅ 纯文本存储，内容干净简洁
-- ✅ 实时预览功能，支持编辑/预览模式切换
-- ✅ 完美支持 GitHub Flavored Markdown (GFM)
-- ✅ 有序列表序号完美保持，无任何丢失问题
-- ✅ 优化编辑器界面，提供快速插入工具栏
-- ✅ 修复日记展示页渲染问题，统一使用 @uiw/react-md-editor 渲染
-- ✅ 支持表格、代码块、图片等复杂 Markdown 元素正确显示
-
-### v1.2.0 (2025-12-08)
-
-- ✅ 新增Quill.js编辑器支持（推荐⭐）
-- ✅ 完美解决TipTap编辑器有序列表序号丢失问题
-- ✅ Quill编辑器成为默认编辑器，生产就绪
-- ✅ 支持自定义序号列表（包括非连续序号）
-- ✅ 完善Quill编辑器测试套件
-- ✅ 修复编辑器无限加载问题
-
-### v1.1.2 (2025-12-08)
-
-- ✅ 修复XSS安全漏洞，添加输入清理机制
-- ✅ 完善自动化测试框架，覆盖核心功能
-- ✅ 添加安全性测试和边界值测试
-- ✅ 修复模块类型警告和导入错误
-- ✅ 新增图片上传专项测试
-
-### v1.1.1 (2025-12-08)
-
-- ✅ 修复TipTap编辑器有序列表序号丢失问题
-- ✅ 优化编辑器初始化逻辑，避免循环更新
-- ✅ 改进Markdown与HTML转换，支持非连续序号保留
-- ✅ 完善编辑器生命周期管理
-
-### v1.1.0 (2025-12-08)
-
-- ✅ 解决MDX Editor转义问题
-- ✅ 新增TipTap编辑器（默认）
-- ✅ 支持三种编辑器选择
-- ✅ 实现真正的所见即所得编辑
-- ✅ 优化编辑器性能和用户体验
-
-### v1.0.0 (2025-12-07)
-
-- ✅ 完成所有计划功能
-- ✅ 实现所见即所得编辑器
-- ✅ 支持图片上传和展示
-- ✅ 实现数据备份和导出
-- ✅ 完成Docker部署配置
-- ✅ 优化移动端体验
+[查看完整更新日志](CHANGELOG.md)
 
 ## 🗺️ 后续计划
 

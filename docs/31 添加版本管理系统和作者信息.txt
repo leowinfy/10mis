@@ -1,0 +1,66 @@
+添加版本管理系统和作者信息
+==========================
+
+日期：2025-12-09
+任务：为项目添加版本管理和Docker镜像集成作者信息
+
+完成内容：
+----------
+1. 更新package.json
+   - 版本升级到4.1.0
+   - 添加详细的作者信息（leowinfy）
+   - 新增版本管理和Docker相关的npm脚本
+
+2. 创建版本管理模块（src/lib/version.ts）
+   - 统一的版本信息管理
+   - 支持获取完整版本信息
+   - API响应用的版本信息格式
+
+3. 更新Dockerfile
+   - 添加LABEL标签包含作者和版本信息
+   - 构建时动态获取版本号
+   - 设置环境变量保存版本信息
+
+4. 创建版本API端点（src/app/api/version/route.ts）
+   - 提供版本信息查询接口
+   - 包含运行时信息（uptime、nodeVersion等）
+
+5. 更新健康检查API（src/app/api/health/route.ts）
+   - 集成版本信息
+   - 检查数据库和文件系统权限
+
+6. 更新Footer组件
+   - 显示版本号和作者信息
+   - 添加GitHub和版本信息链接
+   - 支持暗色模式
+
+7. 更新README.md
+   - 添加版本管理章节
+   - 更新版本徽章到4.1.0
+   - 添加作者徽章
+   - 添加版本相关命令说明
+
+新增命令：
+---------
+- npm run version - 查看当前版本
+- npm run docker:build - 构建带版本标签的Docker镜像
+- npm run docker:tag - 为Docker镜像打latest标签
+- npm run docker:push - 推送镜像到Docker Hub
+- npm run release - 发布新版本（自动更新版本号、构建和推送）
+
+API端点：
+--------
+- /api/health - 健康检查，包含版本信息
+- /api/version - 详细的版本信息查询
+
+Docker镜像标签：
+--------------
+- leowinfy/10mins:v4.1.0 - 具体版本
+- leowinfy/10mins:latest - 最新版本
+
+注意事项：
+--------
+1. 版本号遵循语义化版本控制（Semantic Versioning）
+2. 发布新版本时使用npm version命令自动更新
+3. Docker构建时会自动包含版本信息
+4. 所有组件都可以获取到当前版本信息

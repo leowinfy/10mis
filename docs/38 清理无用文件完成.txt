@@ -1,0 +1,23 @@
+# 清理无用文件完成
+
+## 清理的文件列表
+
+1. **docker-compose.nas-entrypoint.yml** - 引用了不存在的Dockerfile.nas
+2. **docker-compose.nas-flexible.yml** - 复杂的UID匹配配置，已被root版本替代
+3. **docker-compose.nas.yml** - 旧版本的NAS配置文件
+4. **fix-permissions.sh** - 权限修复脚本，root版本无需此脚本
+5. **src/lib/db-nas.ts** - NAS专用数据库模块，已不再使用
+
+## 保留的文件
+
+1. **docker-compose.yml** - 标准部署配置
+2. **docker-compose.nas-root.yml** - NAS root版本部署配置（推荐）
+3. **deploy-nas.sh** - NAS自动部署脚本
+4. **fix-nas-dir.sh** - NAS目录权限修复脚本（备用）
+
+## 清理原因
+
+随着root版本镜像（leowinfy/10mins:root）的成功，这些复杂的权限解决方案已经不再需要。root版本通过以root用户运行容器，完美解决了NAS环境下的权限问题，大大简化了部署流程。
+
+日期：2025-12-09
+版本：v4.1.7

@@ -1,0 +1,80 @@
+修复Docker Desktop ES模块错误 v4.1.6
+====================================
+
+日期：2025-12-09
+问题：Docker Desktop运行v4.1.5报ES模块错误
+
+问题描述：
+--------
+在Docker Desktop上运行v4.1.5镜像时出现以下错误：
+```
+ReferenceError: require is not defined in ES module scope, you can use import instead
+This file is being treated as an ES module because it has a '.js' file extension
+and '/app/package.json' contains "type": "module".
+```
+
+原因分析：
+--------
+项目package.json中设置了 `"type": "module"`，导致Node.js将所有.js文件视为ES模块。
+而Dockerfile中的start.js使用了CommonJS语法（require），因此产生冲突。
+
+解决方案：
+--------
+将启动脚本从start.js重命名为start.cjs，明确告知Node.js使用CommonJS模块系统。
+
+具体修改：
+--------
+1. Dockerfile修改：
+   - 将 `cat > /app/start.js` 改为 `cat > /app/start.cjs`
+   - 将 CMD 中的 `node start.js` 改为 `node start.cjs`
+
+2. 版本更新：
+   - package.json: 4.1.5 → 4.1.6
+   - Dockerfile label: 4.1.5 → 4.1.6
+
+构建和部署：
+--------
+1. 构建命令：
+   ```bash
+   docker build --build-arg USER_ID=1000 --build-arg GROUP_ID=1000 -t leowinfy/10mins:v4.1.6 .
+   ```
+
+2. 推送镜像：
+   - leowinfy/10mins:v4.1.6 ✓
+   - leowinfy/10mins:latest ✓
+
+测试验证：
+--------
+在Docker Desktop上测试v4.1.6镜像：
+```bash
+docker run -d -p 3000:3000 -v ./data:/app/data leowinfy/10mins:latest
+```
+
+预期结果：
+- 容器正常启动
+- 能够正常创建、编辑、删除日记
+- 兼容Docker Desktop和极空间NAS
+
+后续建议：
+--------
+1. 在极空间NAS上测试v4.1.6，确保UID/GID功能正常
+2. 考虑将所有内部脚本统一使用.cjs扩展名，避免混淆
+3. 可以考虑使用ES模块语法重写start脚本，但需要更多测试
+
+技术细节：
+--------
+- CommonJS (.cjs) vs ES Modules (.js)
+- package.json中的"type": "module"影响
+- Node.js模块解析机制
+
+相关文档：
+--------
+- Node.js ES Modules: https://nodejs.org/api/esm.html
+- Dockerfile最佳实践
+
+镜像信息：
+--------
+- 版本：v4.1.6
+- 大小：约200MB（压缩后）
+- 修复：ES模块兼容性问题
+- 兼容：Docker Desktop、极空间NAS、Linux服务器

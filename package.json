@@ -1,7 +1,7 @@
 {
   "name": "10mins",
-  "version": "4.0.1",
-  "description": "一个支持Markdown编辑的日记应用，完美兼容移动端和PC端，具备所见即所得的编辑体验。",
+  "version": "4.1.7",
+  "description": "每天十分钟 - 专注于培养写作习惯的优雅日记应用",
   "private": true,
   "type": "module",
   "homepage": "https://github.com/leowinfy/10mins#readme",
@@ -19,9 +19,22 @@
     "nextjs",
     "react",
     "vditor",
-    "typescript"
+    "typescript",
+    "daily",
+    "notes",
+    "writing"
   ],
-  "author": "leowinfy <winfylau@hotmail.com>",
+  "author": {
+    "name": "leowinfy",
+    "email": "winfylau@hotmail.com",
+    "url": "https://github.com/leowinfy"
+  },
+  "contributors": [
+    {
+      "name": "leowinfy",
+      "email": "winfylau@hotmail.com"
+    }
+  ],
   "license": "MIT",
   "scripts": {
     "dev": "next dev",
@@ -35,7 +48,12 @@
     "test:components": "jest tests/components",
     "test:integration": "jest tests/integration",
     "test:e2e": "playwright test",
-    "test:all": "npm run test && npm run test:e2e"
+    "test:all": "npm run test && npm run test:e2e",
+    "version": "node -p \"require('./package.json').version\"",
+    "docker:build": "docker build -t leowinfy/10mins:v$(npm run version --silent) .",
+    "docker:tag": "docker tag leowinfy/10mins:v$(npm run version --silent) leowinfy/10mins:latest",
+    "docker:push": "docker push leowinfy/10mins:v$(npm run version --silent) && docker push leowinfy/10mins:latest",
+    "release": "npm version patch && npm run docker:build && npm run docker:tag && npm run docker:push"
   },
   "dependencies": {
     "@mdxeditor/editor": "^3.11.3",

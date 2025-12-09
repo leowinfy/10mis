@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   10mins:
-    build: .
+    image: leowinfy/10mins:v4.1.7
     ports:
       - "3000:3000"
     volumes:
@@ -13,10 +13,11 @@ services:
       - DATABASE_URL=file:./data/db/diaries.json
       - UPLOAD_DIR=/app/data/uploads
     restart: unless-stopped
-    # 使用默认用户（nextjs）
+    # 使用root用户运行，确保有足够权限
+    user: "0:0"
     healthcheck:
       test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/api/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) }).on('error', () => process.exit(1))"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 10s
+      start_period: 30s

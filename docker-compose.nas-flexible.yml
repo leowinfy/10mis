@@ -2,7 +2,11 @@ version: '3.8'
 
 services:
   10mins:
-    build: .
+    build:
+      context: .
+      args:
+        USER_ID: ${USER_ID:-1000}
+        GROUP_ID: ${GROUP_ID:-1000}
     ports:
       - "3000:3000"
     volumes:
@@ -13,10 +17,12 @@ services:
       - DATABASE_URL=file:./data/db/diaries.json
       - UPLOAD_DIR=/app/data/uploads
     restart: unless-stopped
-    # 使用默认用户（nextjs）
+    # 极空间NAS可能需要使用root权限来创建文件
+    # 然后在容器内切换到正确用户
+    user: "${USER_ID:-1000}:${GROUP_ID:-1000}"
     healthcheck:
       test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/api/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) }).on('error', () => process.exit(1))"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 10s
+      start_period: 30s

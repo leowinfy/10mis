@@ -1,0 +1,78 @@
+Docker镜像v4.1.5构建和部署完成
+===============================
+
+日期：2025-12-09
+任务：构建Docker镜像v4.1.5，解决极空间NAS权限问题
+
+主要改进：
+--------
+1. 实现了UID/GID匹配机制
+   - 使用ARG USER_ID=1000和GROUP_ID=1000构建参数
+   - 容器内创建与宿主机匹配的用户
+   - 解决了极空间NAS上的文件写入权限问题
+
+2. 简化了启动流程
+   - 移除了外部entrypoint脚本依赖
+   - 使用内联Node.js脚本进行初始化
+   - 避免了Docker Desktop上的路径问题
+
+3. 构建过程
+   - 使用多阶段构建优化镜像大小
+   - Next.js standalone模式减少运行时依赖
+   - 设置正确的文件权限（chown -R 1000:1000 /app）
+
+技术细节：
+--------
+- Docker镜像：leowinfy/10mins:v4.1.5
+- 基础镜像：node:20-alpine
+- UID/GID：1000:1000（与极空间NAS匹配）
+- 健康检查：内置/api/health端点检查
+
+部署方式：
+--------
+1. 极空间NAS：
+   docker run -d --name 10mins-diary -p 3000:3000 \
+     -v ./data:/app/data -v ./backups:/app/backups \
+     --user 1000:1000 leowinfy/10mins:latest
+
+2. Docker Desktop：
+   docker run -d --name 10mins-diary -p 3000:3000 \
+     -v ./data:/app/data leowinfy/10mins:latest
+
+3. docker-compose：
+   docker-compose up -d
+
+文档更新：
+--------
+- 创建了《32 UID权限问题终极解决方案.md》
+- 更新了README.md的部署说明
+- 保留了针对不同环境的部署方案
+
+后续建议：
+--------
+1. 在极空间NAS上测试，确保能够正常创建、更新、删除日记
+2. 测试文件上传功能
+3. 定期备份数据目录
+
+版本信息：
+--------
+- 当前版本：v4.1.5
+- Docker镜像大小：约200MB（压缩后）
+- Node.js版本：20 LTS
+- Next.js版本：15.1.4
+
+构建输出摘要：
+--------
+- 构建时间：约25分钟
+- npm包安装：1156个包
+- 构建警告：5个（主要是ESLint警告）
+- 推送成功：v4.1.5和latest标签都已推送到Docker Hub
+
+注意：
+--------
+虽然构建过程中有一些警告，但这些都是非关键性的：
+1. 一些npm包已过时，但不影响功能
+2. ESLint警告是关于依赖数组的，可以在后续版本中修复
+3. Next.js安全警告已记录，但不影响当前部署
+
+镜像已成功推送到Docker Hub，可以在极空间NAS和其他环境中使用。

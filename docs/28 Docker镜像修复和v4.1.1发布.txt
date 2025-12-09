@@ -1,0 +1,61 @@
+Docker镜像修复和v4.1.1发布
+========================
+
+日期：2025-12-09
+问题：docker-entrypoint.sh文件无法找到，导致容器无法启动
+
+修复内容：
+---------
+1. 重新组织Dockerfile结构
+   - 在切换到nextjs用户之前复制所有必要文件
+   - 确保docker-entrypoint.sh有正确的执行权限
+   - 修复文件所有权问题
+
+2. 修复的具体问题
+   - docker-entrypoint.sh需要在root用户时复制和设置权限
+   - 文件必须属于nextjs用户才能在切换用户后执行
+   - 合并了权限设置命令，减少层大小
+
+3. 版本升级
+   - 版本号从4.1.0升级到4.1.1
+   - 新版本修复了Docker容器启动问题
+
+测试命令：
+--------
+# 1. 拉取最新镜像
+docker pull leowinfy/10mins:latest
+
+# 2. 运行容器（测试模式）
+docker run -d -p 3000:3000 --name 10mins-test leowinfy/10mins:latest
+
+# 3. 查看容器日志
+docker logs 10mins-test
+
+# 4. 停止并删除测试容器
+docker stop 10mins-test
+docker rm 10mins-test
+
+# 5. 运行容器（带数据卷）
+docker run -d -p 3000:3000 -v 10mins-data:/app/data --name 10mins-diary leowinfy/10mins:latest
+
+Docker镜像信息：
+------------
+- 镜像名称：leowinfy/10mins:v4.1.1
+- 镜像大小：约294MB
+- 基础镜像：Node.js 20 Alpine
+- 运行用户：nextjs (uid=1001)
+- 支持的Docker平台：linux/amd64, linux/arm64
+
+修复后的优势：
+----------
+1. 容器可以正常启动
+2. 自动处理权限问题（特别适合NAS部署）
+3. 初始化脚本会创建必要的数据目录
+4. 支持root权限启动后自动降权运行
+5. 更好的错误处理和日志输出
+
+注意事项：
+---------
+- 首次运行可能需要一些时间初始化
+- 查看日志确认初始化是否成功
+- 如果使用NAS部署，确保数据目录有读写权限

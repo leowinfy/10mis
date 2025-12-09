@@ -1,0 +1,68 @@
+# v4.1.7 版本发布总结
+
+## 发布时间
+2025-12-09
+
+## 版本标签
+- leowinfy/10mins:v4.1.7 - 标准版本
+- leowinfy/10mins:root - NAS专用root版本
+
+## 主要更新内容
+
+### 1. 完美解决NAS权限问题
+- 创建了root版本Docker镜像（Dockerfile.root）
+- 通过以root用户运行容器，彻底解决了极空间NAS的权限问题
+- 无需复杂的UID/GID匹配，简化了部署流程
+
+### 2. 更新文档
+- 更新README.md，明确说明NAS部署必须使用root版本
+- 添加详细的NAS部署指南和图形界面配置说明
+- 创建极空间NAS图形界面部署指南文档
+
+### 3. 代码清理
+- 删除了不再需要的配置文件：
+  - docker-compose.nas-entrypoint.yml
+  - docker-compose.nas-flexible.yml
+  - docker-compose.nas.yml
+  - fix-permissions.sh
+  - src/lib/db-nas.ts
+- 保留了必要文件：
+  - docker-compose.nas-root.yml（NAS部署推荐）
+  - deploy-nas.sh（自动部署脚本）
+  - fix-nas-dir.sh（备用修复脚本）
+
+### 4. 改进的错误处理
+- 应用在遇到权限问题时不再无限重启
+- 支持在权限受限的情况下以只读模式运行
+- 提供详细的错误日志帮助诊断问题
+
+## 推荐部署方式
+
+### NAS设备（极空间、群晖、威联通等）
+```bash
+# 下载root版本镜像
+docker pull leowinfy/10mins:root
+
+# 使用docker-compose部署
+docker-compose -f docker-compose.nas-root.yml up -d
+```
+
+### 其他环境
+```bash
+# 标准部署
+docker-compose up -d
+```
+
+## 用户反馈
+- 根版本在极空间NAS上完美运行，解决了所有权限问题
+- 标准版本在Docker Desktop等环境正常工作
+
+## 后续计划
+- 考虑将root版本作为NAS设备的首选部署方案
+- 继续优化用户体验和文档完善
+- 收集用户反馈，准备下一版本功能开发
+
+## 技术要点
+- 使用Docker多阶段构建优化镜像大小
+- 保留root版本和标准版本，满足不同部署环境需求
+- 通过标签区分不同用途的镜像版本

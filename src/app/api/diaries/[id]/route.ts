@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
-import { dbOperations } from '@/lib/db'
+import { dbOperations } from '@/lib/db-enhanced'
 import { deleteImages } from '@/lib/storage'
 import { sanitizeHtml } from '@/lib/utils'
 
@@ -90,7 +90,10 @@ export async function PUT(
 
     if (!updated) {
       return NextResponse.json(
-        { error: '更新失败' },
+        {
+          error: '更新失败',
+          message: '数据库更新失败，请检查数据目录权限'
+        },
         { status: 500 }
       )
     }
@@ -154,7 +157,10 @@ export async function DELETE(
 
     if (!deleted) {
       return NextResponse.json(
-        { error: '删除失败' },
+        {
+          error: '删除失败',
+          message: '数据库删除失败，请检查数据目录权限'
+        },
         { status: 500 }
       )
     }

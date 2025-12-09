@@ -1,0 +1,166 @@
+极空间NAS权限问题解决方案汇总
+===========================
+
+日期：2025-12-09
+版本：v4.1.7
+问题：EACCES权限拒绝，无法访问数据目录
+
+问题本质：
+--------
+容器内用户UID/GID与极空间NAS挂载卷的所有者不匹配，导致无法读写文件。
+
+解决方案（按推荐顺序）：
+--------------------
+
+### 方案一：使用root权限运行（最简单）
+
+适用于快速测试和开发环境：
+
+```yaml
+# docker-compose.nas-root.yml
+version: '3.8'
+
+services:
+  10mins:
+    image: leowinfy/10mins:v4.1.7
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./data:/app/data
+      - ./backups:/app/backups
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=file:./data/db/diaries.json
+      - UPLOAD_DIR=/app/data/uploads
+    restart: unless-stopped
+    user: "0:0"  # 使用root用户
+```
+
+部署命令：
+```bash
+docker-compose -f docker-compose.nas-root.yml up -d
+```
+
+### 方案二：使用entrypoint脚本自动调整权限（推荐）
+
+更安全的方案，使用专用的Dockerfile和entrypoint：
+
+1. 使用提供的Dockerfile.nas构建镜像：
+```bash
+docker build -f Dockerfile.nas -t 10mins-nas .
+```
+
+2. 使用docker-compose.nas-entrypoint.yml部署：
+```bash
+# 可以根据实际情况调整PUID/PGID
+USER_ID=1000 GROUP_ID=1000 PUID=1000 PGID=1000 docker-compose -f docker-compose.nas-entrypoint.yml up -d
+```
+
+特点：
+- 启动时自动修复权限
+- 支持通过环境变量自定义UID/GID
+- 自动创建必要的目录和文件
+
+### 方案三：检查并匹配正确的UID/GID
+
+1. 在极空间上查看数据目录权限：
+```bash
+ls -la /path/to/data
+```
+
+2. 记下UID和GID（例如：1026:100）
+
+3. 使用正确的UID/GID运行：
+```bash
+docker run -d \
+  --name 10mins-diary \
+  -p 3000:3000 \
+  -v ./data:/app/data \
+  --user 1026:100 \
+  leowinfy/10mins:v4.1.7
+```
+
+### 方案四：在极空间上修改目录权限
+
+如果有SSH访问权限：
+
+```bash
+# 修改数据目录所有者
+sudo chown -R 1000:1000 /path/to/data
+sudo chown -R 1000:1000 /path/to/backups
+
+# 或者设置宽松权限（不推荐用于生产）
+sudo chmod -R 777 /path/to/data
+sudo chmod -R 777 /path/to/backups
+```
+
+### 方案五：使用自动部署脚本
+
+使用提供的deploy-nas.sh脚本：
+
+```bash
+chmod +x deploy-nas.sh
+./deploy-nas.sh
+```
+
+脚本会自动：
+- 检测挂载目录的UID/GID
+- 使用正确的权限构建镜像
+- 部署容器
+
+验证方法：
+--------
+1. 查看容器日志：
+```bash
+docker logs 10mins-diary
+```
+
+2. 成功的标志：
+- 看到"Database file is writable"
+- 健康检查通过
+- 能够创建、编辑、删除日记
+
+3. 测试API：
+```bash
+curl http://localhost:3000/api/health
+```
+
+故障排除：
+--------
+
+1. 如果仍有权限问题：
+   - 检查极空间NAS的Docker配置
+   - 确认数据目录已正确挂载
+   - 尝试使用root权限（方案一）
+
+2. 如果容器无法启动：
+   - 检查Docker日志
+   - 确认镜像构建成功
+   - 验证docker-compose配置
+
+3. 如果数据丢失：
+   - 确认数据卷正确挂载
+   - 检查备份目录
+
+最佳实践：
+--------
+1. 生产环境建议使用方案二或方案三
+2. 开发测试可以使用方案一
+3. 定期备份数据
+4. 使用健康检查监控服务状态
+
+文件说明：
+--------
+- docker-compose.nas-root.yml: root权限配置
+- docker-compose.nas-entrypoint.yml: entrypoint脚本配置
+- Dockerfile.nas: 包含entrypoint的Dockerfile
+- entrypoint.sh: 权限调整脚本
+- deploy-nas.sh: 自动部署脚本
+- src/lib/db-nas.ts: 增强的数据库模块（包含权限修复）
+
+注意事项：
+--------
+1. root权限虽然简单，但会降低安全性
+2. 确保数据目录已创建并正确挂载
+3. 首次部署后建议测试所有功能
+4. 定期检查日志，确保没有权限错误

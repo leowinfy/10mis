@@ -1,0 +1,67 @@
+Docker镜像完全修复和v4.1.2发布
+============================
+
+日期：2025-12-09
+问题：Docker容器启动失败，找不到docker-entrypoint.sh文件
+
+最终解决方案：
+--------------
+
+1. 问题根本原因
+   - Next.js的standalone模式生成的.server.js不包含自定义脚本
+   - Dockerfile中的文件复制顺序有问题
+   - ENTRYPOINT脚本路径不正确
+
+2. 采取的修复措施
+   - 移除了自定义ENTRYPOINT，使用Next.js原生的server.js
+   - 简化Dockerfile结构，确保所有文件正确复制
+   - 保留必要的权限设置，但使用更直接的方式
+
+3. 最终的Dockerfile结构
+   ```dockerfile
+   # 复制构建产物
+   COPY --from=builder /app/public ./public
+   COPY --from=builder /app/.next/standalone ./
+   COPY --from=builder /app/.next/static ./.next/static
+
+   # 直接使用CMD运行
+   CMD ["node", "server.js"]
+   ```
+
+4. 测试结果
+   - ✅ 容器成功启动
+   - ✅ API接口正常工作
+   - ✅ 健康检查通过
+   - ✅ 数据库创建成功
+
+版本信息：
+--------
+- 版本号：v4.1.2
+- 镜像大小：约294MB
+- 基础镜像：Node.js 20 Alpine
+- 运行用户：nextjs (uid=1001)
+
+使用说明：
+--------
+# 拉取镜像
+docker pull leowinfy/10mins:latest
+
+# 运行容器
+docker run -d -p 3000:3000 -v 10mins-data:/app/data --name 10mins-diary leowinfy/10mins:latest
+
+# 访问应用
+# http://localhost:3000
+
+注意事项：
+--------
+- 容器内部会自动创建数据目录
+- 不再需要entrypoint脚本，由Next.js自己处理
+- 保持了用户权限隔离（非root运行）
+- 适合各种部署环境（本地、云服务器、NAS等）
+
+后续改进建议：
+-------------
+1. 考虑添加多平台支持（ARM64）
+2. 优化镜像大小（使用多阶段构建）
+3. 添加健康检查的重试机制
+4. 考虑使用docker-compose进行更方便的部署

@@ -1,0 +1,87 @@
+Docker Desktop权限问题解决方案
+===========================
+
+日期：2025-12-09
+问题：Docker Desktop中运行容器报错 "exec /app/docker-entrypoint.sh: no such file or directory"
+
+问题分析：
+--------
+1. Docker Desktop在Windows上的特殊环境
+2. 文件路径和权限处理问题
+3. ENTRYPOINT脚本可能无法正确执行
+
+解决方案：
+--------
+
+方案1：使用CMD替代ENTRYPOINT（推荐）
+---------------------------------
+修改Dockerfile，使用CMD而不是ENTRYPOINT：
+
+```dockerfile
+# 不使用ENTRYPOINT
+# ENTRYPOINT ["/app/docker-entrypoint.sh"]
+
+# 改用CMD
+CMD ["sh", "-c", "node init-data.js && node server.js"]
+```
+
+优点：
+- 更简单，不依赖外部脚本文件
+- 避免了路径问题
+- 兼容性更好
+
+方案2：创建极空间NAS专用的docker-compose文件
+----------------------------------------------
+1. 标准环境使用 docker-compose.yml（非root）
+2. 极空间NAS使用 docker-compose.nas.yml（root权限）
+
+```bash
+# 标准环境
+docker-compose up -d
+
+# 极空间NAS环境
+docker-compose -f docker-compose.nas.yml up -d
+```
+
+方案3：Docker运行时的注意事项
+----------------------------
+
+1. Docker Desktop（Windows）：
+   ```bash
+   docker run -d -p 3000:3000 \
+     -v ./data:/app/data \
+     leowinfy/10mins:v4.1.4
+   ```
+
+2. 极空间NAS：
+   ```bash
+   docker run -d -p 3000:3000 \
+     -v ./data:/app/data \
+     --user root \
+     leowinfy/10mins:v4.1.4
+   ```
+
+3. Linux/云服务器：
+   ```bash
+   docker run -d -p 3000:3000 \
+     -v ./data:/app/data \
+     leowinfy/10mins:v4.1.4
+   ```
+
+关键改进：
+--------
+1. 移除了对自定义entrypoint脚本的依赖
+2. 使用内联Node.js脚本初始化数据
+3. 简化了Dockerfile结构
+4. 提供了不同环境的部署方案
+
+测试方法：
+--------
+1. 本地测试（Docker Desktop）
+2. 极空间NAS测试
+3. 其他云服务器测试
+
+版本信息：
+--------
+- Docker镜像：v4.1.4
+- 主要改进：移除ENTRYPOINT依赖，简化启动流程

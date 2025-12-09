@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
-import { dbOperations } from '@/lib/db'
+import { dbOperations } from '@/lib/db-enhanced'
 import { deleteImages, sanitizeHtml } from '@/lib/utils'
 
 // 创建日记的请求体验证
@@ -65,8 +65,18 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // 返回更详细的错误信息
+    const errorMessage = error instanceof Error ? error.message : String(error)
     return NextResponse.json(
-      { error: '创建日记失败' },
+      {
+        error: '创建日记失败',
+        message: errorMessage,
+        debug: {
+          cwd: process.cwd(),
+          uid: process.getuid?.() || 'unknown',
+          gid: process.getgid?.() || 'unknown'
+        }
+      },
       { status: 500 }
     )
   }
