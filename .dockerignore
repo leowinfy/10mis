@@ -1,0 +1,17 @@
+Dockerfile
+.dockerignore
+node_modules
+npm-debug.log
+README.md
+.env
+.next
+.git
+.gitignore
+old-editors
+docs
+.git
+.github
+src/components/MarkdownPreview.tsx
+tests
+test-results
+playwright-report

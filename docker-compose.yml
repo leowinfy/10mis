@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  10mins:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./data:/app/data
+      - ./backups:/app/backups
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=file:./data/db/10mins.db
+      - UPLOAD_DIR=/app/data/uploads
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3

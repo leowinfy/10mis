@@ -1,0 +1,193 @@
+日记网站实施计划
+
+ 项目概述
+
+ 创建一个支持移动端和PC端的日记网站，具备所见即所得的Markdown编辑功能，支持图片上传，并可单Docker容器部署。
+
+ 技术栈
+
+ 核心框架
+
+ - 前端框架: Next.js 15 (React)
+ - 后端: Next.js API Routes
+ - 数据库: SQLite
+ - 编辑器: MDX Editor (所见即所得)
+ - 样式: Tailwind CSS (响应式设计)
+
+ 辅助工具
+
+ - 图片处理: Sharp
+ - 文件上传: Multer
+ - 数据验证: Zod
+ - 类型安全: TypeScript
+
+ 项目结构
+
+ 10mins/
+ ├── src/
+ │   ├── app/
+ │   │   ├── api/
+ │   │   │   ├── diaries/          # 日记CRUD API
+ │   │   │   ├── upload/           # 图片上传API
+ │   │   │   └── export/           # 数据导出API
+ │   │   ├── (dashboard)/          # 主应用路由组
+ │   │   │   └── page.tsx         # 日记列表页
+ │   │   ├── diary/
+ │   │   │   ├── [id]/            # 单篇日记页面
+ │   │   │   └── new/             # 新建日记页面
+ │   │   ├── globals.css
+ │   │   ├── layout.tsx
+ │   │   └── page.tsx             # 首页
+ │   ├── components/
+ │   │   ├── ui/                  # 基础UI组件
+ │   │   ├── editor/              # Markdown编辑器组件
+ │   │   ├── diary-card/          # 日记卡片组件
+ │   │   └── mobile-menu/         # 移动端菜单
+ │   ├── lib/
+ │   │   ├── db.ts               # 数据库连接
+ │   │   ├── storage.ts          # 文件存储管理
+ │   │   └── utils.ts            # 工具函数
+ │   └── types/
+ │       └── diary.ts            # 类型定义
+ ├── public/
+ │   └── uploads/                # 图片存储目录
+ ├── data/
+ │   └── db/                     # SQLite数据库
+ ├── scripts/
+ │   └── backup.sh              # 自动备份脚本
+ ├── docker-compose.yml
+ ├── Dockerfile
+ └── package.json
+
+ 实施步骤
+
+ 1. 项目初始化
+
+ - 创建Next.js项目
+ - 安装必要依赖
+ - 配置TypeScript和ESLint
+ - 设置Tailwind CSS
+
+ 2. 数据库设计与实现
+
+ - 设计diaries表结构
+ - 创建数据库连接和初始化脚本
+ - 实现基础CRUD操作
+
+ diaries表结构
+
+ CREATE TABLE diaries (
+   id INTEGER PRIMARY KEY AUTOINCREMENT,
+   title TEXT NOT NULL,
+   content TEXT NOT NULL,
+   images TEXT, -- JSON数组存储图片路径
+   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+ );
+
+ 3. API开发
+
+ - /api/diaries - GET（列表）, POST（创建）
+ - /api/diaries/[id] - GET（详情）, PUT（更新）, DELETE（删除）
+ - /api/upload - POST（图片上传）
+ - /api/export - GET（数据导出）
+
+ 4. 前端组件开发
+
+ - 响应式布局组件
+ - MDX Editor集成与配置
+ - 日记列表和详情页
+ - 图片上传组件
+
+ 5. 功能实现
+
+ - Markdown实时渲染
+ - 图片拖拽上传
+ - 移动端适配
+ - 数据备份功能
+
+ 6. Docker配置
+
+ - 编写Dockerfile
+ - 配置docker-compose
+ - 设置数据卷持久化
+
+ 关键实现细节
+
+ MDX Editor配置
+
+ import { MDXEditor, headingsPlugin, thematicBreakPlugin, listsPlugin, quotePlugin, thematicBreakPlugin, markdownShortcutPlugin } from '@mdxeditor/editor';
+
+ const editor = (
+   <MDXEditor
+     markdown={content}
+     plugins={[
+       headingsPlugin(),
+       listsPlugin(),
+       quotePlugin(),
+       thematicBreakPlugin(),
+       markdownShortcutPlugin()
+     ]}
+     onChange={handleChange}
+   />
+ );
+
+ 图片处理流程
+
+ 1. 前端：MDX Editor支持拖拽和粘贴图片
+ 2. 上传：multer接收文件，sharp压缩优化
+ 3. 存储：本地文件系统，路径存入数据库
+ 4. 展示：Markdown中显示为![alt](/uploads/filename.jpg)
+
+ 响应式设计策略
+
+ - 移动优先设计
+ - Tailwind CSS响应式断点
+ - 触摸友好的交互设计
+ - PWA支持（可选）
+
+ 部署方案
+
+ Docker单容器方案
+
+ FROM node:20-alpine
+ WORKDIR /app
+ COPY package*.json ./
+ RUN npm ci --only=production
+ COPY . .
+ RUN npm run build
+ EXPOSE 3000
+ CMD ["npm", "start"]
+
+ 数据备份策略
+
+ 1. 自动每日SQLite备份
+ 2. 定期打包图片文件
+ 3. 提供API导出JSON/Markdown格式
+ 4. 保留30天历史备份
+
+ 安全考虑
+
+ - 图片文件类型和大小限制
+ - SQLite文件权限控制
+ - API路由访问控制（如需要）
+ - XSS防护（Markdown渲染）
+
+ 后续优化方向
+
+ 1. 添加全文搜索功能
+ 2. 实现日记分类和标签
+ 3. 支持日记导出为PDF
+ 4. 添加暗黑模式
+ 5. 实现多用户支持（如需要）
+
+ 预估开发时间
+
+ - 项目初始化和基础配置：1天
+ - 数据库和API开发：2天
+ - 前端组件开发：3天
+ - 功能集成和测试：2天
+ - Docker配置和部署：1天
+ - 总计：约9天
+
+ 此方案采用成熟稳定的技术栈，既能满足功能需求，又保持了架构的简洁性，便于后续维护和扩展。

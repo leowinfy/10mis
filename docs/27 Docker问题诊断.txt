@@ -1,0 +1,37 @@
+Docker 问题诊断报告
+==================
+
+时间：2025-12-09
+
+问题描述：
+用户反馈在 Docker Desktop 中显示 error
+
+诊断过程：
+1. 检查了 Dockerfile 配置 - 正常
+2. 检查了容器运行状态 - 容器正常启动并监听 3000 端口
+3. 查看了容器日志 - Next.js 成功启动，Ready in 78ms
+
+可能的原因：
+1. Docker Desktop 的健康检查失败
+2. 资源限制（CPU/内存）
+3. 端口冲突（3000 端口已被占用）
+4. 镜像构建问题（依赖冲突）
+
+解决方案：
+1. 添加了健康检查端点 /api/health
+2. 在 Dockerfile 中添加了 HEALTHCHECK 指令
+3. 修复了构建时的依赖冲突
+4. 使用 --legacy-peer-deps 解决 npm 依赖问题
+
+建议用户操作：
+1. 检查 Docker Desktop 的设置，确保有足够的内存分配
+2. 检查 3000 端口是否被其他程序占用
+3. 查看 Docker Desktop 的错误详情
+4. 尝试使用以下命令运行：
+   docker run -d -p 3000:3000 --name 10mins-test 10mins
+5. 访问 http://localhost:3000/api/health 检查健康状态
+
+注意：
+- 容器实际上是可以正常运行的
+- 应用已成功启动并在监听 3000 端口
+- error 可能是 Docker Desktop 的显示问题或非关键错误

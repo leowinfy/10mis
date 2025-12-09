@@ -1,0 +1,44 @@
+● 问题解决方案
+
+  我已经解决了tailwind-merge模块的问题。主要修改了以下几点：
+
+  1. 移除了tailwind-merge依赖：这个包在Next.js 15的服务端渲染时出现了兼容性问题
+  2. 简化了cn函数：使用简单的className合并，避免复杂的类名冲突处理
+  3. 使用自定义的Markdown渲染器：避免react-markdown在服务端可能的问题
+
+  现在您可以：
+
+  1. 重新启动开发服务器：
+  cd 10mins
+  npm run dev
+  2. 访问应用：http://localhost:3000
+  3. 测试功能：
+    - 创建新日记（支持Markdown和图片）
+    - 查看日记列表
+    - 查看日记详情
+    - 删除日记
+    - 导出数据
+
+  如果还遇到问题，可以尝试：
+
+  1. 完全清理并重新安装：
+  cd 10mins
+  rm -rf .next node_modules
+  npm install
+  npm run dev
+  2. 使用生产模式测试：
+  npm run build
+  npm run start
+
+  项目已实现的功能：
+
+  - ✅ 响应式设计（PC和移动端）
+  - ✅ 所见即所得的Markdown编辑器
+  - ✅ 图片上传和展示
+  - ✅ 日记的增删改查
+  - ✅ 数据导出（JSON/Markdown）
+  - ✅ 搜索功能
+  - ✅ Docker单容器部署
+  - ✅ 数据备份脚本
+
+  服务器现在应该可以正常运行了。如果还有其他问题，请告诉我！

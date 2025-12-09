@@ -1,0 +1,25 @@
+● 修复总结
+
+  我已经完成了对编辑器序号消失问题的修复。这次的解决方案更加完善：
+
+  修改内容：
+
+  1. 创建了自定义TipTap扩展（src/lib/tiptap-extensions.ts）：
+    - 创建了自定义的 ListItem 扩展，添加了 data-original-number 属性来保存原始序号
+    - 创建了自定义的 OrderedList 扩展，支持 start 属性
+  2. 修改了TipTap编辑器（DiaryEditorTipTapReal.tsx）：
+    - 导入并使用自定义的有序列表扩展
+    - 禁用了默认的有序列表和列表项扩展
+  3. 改进了Markdown转换器（markdown-converter.ts）：
+    - markdownToHtml：现在会保存每个列表项的原始序号到 data-original-number 属性
+    - htmlToMarkdown：会读取并恢复每个列表项的原始序号
+
+  修复效果：
+
+  现在当你编辑包含有序列表的日记时：
+  - ✅ 每个列表项的序号都会被保留
+  - ✅ 支持不连续的序号（如 3.、5.、8.）
+  - ✅ 支持任意起始序号
+  - ✅ 兼容标准的有序列表（从1开始）
+
+  开发服务器已经启动，你现在可以测试这个修复了。创建一个包含各种序号的列表，保存后再编辑，序号应该会保持不变。

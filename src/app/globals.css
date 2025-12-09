@@ -1,0 +1,752 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* 默认主题颜色，将被主题系统覆盖 */
+    --color-primary: #10b981;
+    --color-secondary: #06b6d4;
+    --color-accent: #8b5cf6;
+    --color-background: #f9fafb;
+    --color-surface: #ffffff;
+    --color-text: #111827;
+    --color-text-secondary: #6b7280;
+    --color-border: #e5e7eb;
+    --color-error: #ef4444;
+    --color-warning: #f59e0b;
+    --color-success: #10b981;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-text);
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  .bg-white {
+    background-color: var(--color-surface) !important;
+  }
+
+  .text-gray-900 {
+    color: var(--color-text) !important;
+  }
+
+  .text-gray-700 {
+    color: var(--color-text-secondary) !important;
+  }
+
+  .text-gray-600 {
+    color: var(--color-text-secondary) !important;
+  }
+
+  .border-gray-300 {
+    border-color: var(--color-border) !important;
+  }
+
+  .border-gray-200 {
+    border-color: var(--color-border) !important;
+  }
+
+  .bg-gray-50 {
+    background-color: var(--color-background) !important;
+  }
+
+  .bg-gray-100 {
+    background-color: var(--color-background) !important;
+  }
+
+  .hover\\:bg-gray-50:hover {
+    background-color: var(--color-background) !important;
+  }
+
+  .hover\\:bg-gray-100:hover {
+    background-color: var(--color-background) !important;
+  }
+
+  /* 主色调 */
+  .bg-primary-500 {
+    background-color: var(--color-primary) !important;
+  }
+
+  .bg-primary-600 {
+    background-color: var(--color-primary) !important;
+  }
+
+  .hover\\:bg-primary-700:hover {
+    background-color: var(--color-secondary) !important;
+  }
+
+  .text-primary-600 {
+    color: var(--color-primary) !important;
+  }
+
+  .ring-primary-500 {
+    --tw-ring-color: var(--color-primary) !important;
+  }
+
+  .border-primary-500 {
+    border-color: var(--color-primary) !important;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg transition-colors;
+  }
+
+  .card {
+    @apply bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow;
+  }
+
+  .mobile-menu-item {
+    @apply block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50;
+  }
+}
+
+/* Custom scrollbar for webkit browsers */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-secondary);
+}
+
+/* 自定义动画 */
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient {
+  animation: gradient 6s ease infinite;
+}
+
+/* 确保所有文字颜色在暗色主题下正确显示 */
+body,
+.text-gray-900,
+.text-gray-800,
+.text-gray-700,
+.text-gray-600,
+.text-gray-500 {
+  color: var(--color-text) !important;
+}
+
+.text-gray-400,
+.text-gray-300 {
+  color: var(--color-text-secondary) !important;
+}
+
+/* 暗色主题下的白色背景容器 */
+[data-theme="dark"] .bg-white,
+.dark .bg-white,
+[data-theme="dark"] [class*="bg-white"],
+.dark [class*="bg-white"] {
+  background-color: var(--color-surface) !important;
+}
+
+/* 暗色主题下的文字颜色 */
+[data-theme="dark"],
+.dark {
+  color: var(--color-text) !important;
+}
+
+/* 暗色主题下的特定元素文字 */
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3,
+[data-theme="dark"] h4,
+[data-theme="dark"] h5,
+[data-theme="dark"] h6,
+[data-theme="dark"] p,
+[data-theme="dark"] span,
+[data-theme="dark"] div,
+.dark h1,
+.dark h2,
+.dark h3,
+.dark h4,
+.dark h5,
+.dark h6,
+.dark p,
+.dark span,
+.dark div {
+  color: var(--color-text) !important;
+}
+
+/* 暗色主题下的输入框和标签 */
+[data-theme="dark"] input,
+[data-theme="dark"] textarea,
+[data-theme="dark"] label,
+.dark input,
+.dark textarea,
+.dark label {
+  color: var(--color-text) !important;
+  background-color: var(--color-background) !important;
+  border-color: var(--color-border) !important;
+}
+
+/* Vditor 工具栏特殊处理 */
+[data-theme="dark"] .vditor-toolbar,
+.dark .vditor-toolbar,
+[data-theme="dark"] .vditor-toolbar *,
+.dark .vditor-toolbar * {
+  color: var(--color-text) !important;
+  background-color: var(--color-surface) !important;
+}
+
+/* 编辑页面特定的样式 */
+[data-theme="dark"] .bg-white.shadow-md,
+.dark .bg-white.shadow-md {
+  background-color: var(--color-surface) !important;
+}
+
+/* 编辑页面的文字 */
+[data-theme="dark"] .text-gray-700,
+.dark .text-gray-700 {
+  color: var(--color-text) !important;
+}
+
+/* Vditor 编辑器的快速插入工具栏 */
+[data-theme="dark"] .mb-2,
+.dark .mb-2 {
+  color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .text-gray-600,
+.dark .text-gray-600 {
+  color: var(--color-text-secondary) !important;
+}
+
+/* 修复暗色主题下的工具按钮 */
+[data-theme="dark"] button[class*="px-3"],
+.dark button[class*="px-3"],
+[data-theme="dark"] button[class*="px-4"],
+.dark button[class*="px-4"] {
+  color: var(--color-text) !important;
+}
+
+/* 暗色主题的特殊处理 */
+html {
+  color-scheme: light dark;
+}
+
+/* Vditor 编辑器样式适配 */
+.vditor-reset {
+  color: var(--color-text) !important;
+  background-color: var(--color-surface) !important;
+}
+
+.vditor-reset h1,
+.vditor-reset h2,
+.vditor-reset h3,
+.vditor-reset h4,
+.vditor-reset h5,
+.vditor-reset h6 {
+  color: var(--color-text) !important;
+  border-color: var(--color-border) !important;
+}
+
+.vditor-reset p,
+.vditor-reset div,
+.vditor-reset span,
+.vditor-reset li,
+.vditor-reset td,
+.vditor-reset th {
+  color: var(--color-text) !important;
+}
+
+.vditor-reset code,
+.vditor-reset pre {
+  background-color: var(--color-background) !important;
+  color: var(--color-text) !important;
+  border-color: var(--color-border) !important;
+}
+
+.vditor-reset blockquote {
+  color: var(--color-text-secondary) !important;
+  border-color: var(--color-border) !important;
+}
+
+.vditor-reset table {
+  border-color: var(--color-border) !important;
+}
+
+.vditor-reset td,
+.vditor-reset th {
+  border-color: var(--color-border) !important;
+}
+
+.vditor-reset a {
+  color: var(--color-primary) !important;
+}
+
+.vditor-reset a:hover {
+  color: var(--color-secondary) !important;
+}
+
+/* 暗色主题下的强制样式 */
+[data-theme="dark"] .vditor-reset,
+[data-theme="dark"] .vditor-reset *,
+.dark .vditor-reset,
+.dark .vditor-reset * {
+  color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .vditor-reset a,
+.dark .vditor-reset a {
+  color: var(--color-primary) !important;
+}
+
+[data-theme="dark"] .vditor-reset a:hover,
+.dark .vditor-reset a:hover {
+  color: var(--color-secondary) !important;
+}
+
+[data-theme="dark"] .vditor-reset code,
+[data-theme="dark"] .vditor-reset pre,
+.dark .vditor-reset code,
+.dark .vditor-reset pre {
+  background-color: var(--color-background) !important;
+}
+
+/* 按钮样式增强 */
+.btn-primary,
+.btn-primary:hover {
+  background-color: var(--color-primary) !important;
+  color: white !important;
+}
+
+.btn-secondary,
+.btn-secondary:hover {
+  background-color: var(--color-surface) !important;
+  color: var(--color-text) !important;
+  border-color: var(--color-border) !important;
+}
+
+.btn-ghost,
+.btn-ghost:hover {
+  color: var(--color-text) !important;
+}
+
+.btn-ghost:hover {
+  background-color: var(--color-background) !important;
+}
+
+/* Button variant="secondary" 的特殊处理 */
+button[class*="secondary"],
+a[class*="secondary"] {
+  color: var(--color-text) !important;
+  border-color: var(--color-border) !important;
+}
+
+/* 覆盖Button组件的默认样式 - 使用更高优先级 */
+body .bg-gray-200,
+body button.bg-gray-200,
+body a.bg-gray-200 {
+  background-color: var(--color-surface) !important;
+}
+
+body .text-gray-900,
+body button.text-gray-900,
+body a.text-gray-900 {
+  color: var(--color-text) !important;
+}
+
+body .hover\:bg-gray-300:hover,
+body button.hover\:bg-gray-300:hover,
+body a.hover\:bg-gray-300:hover {
+  background-color: var(--color-background) !important;
+}
+
+/* 所有按钮在暗色主题下的文字颜色 */
+[data-theme="dark"] button,
+[data-theme="dark"] a,
+.dark button,
+.dark a {
+  color: var(--color-text) !important;
+}
+
+/* 特殊处理白色背景的按钮 */
+[data-theme="dark"] button[class*="bg-white"],
+[data-theme="dark"] a[class*="bg-white"],
+.dark button[class*="bg-white"],
+.dark a[class*="bg-white"] {
+  color: var(--color-text) !important;
+  background-color: var(--color-surface) !important;
+}
+
+/* 确保主题切换后所有文字都正确显示 */
+* {
+  transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+}
+
+/* 暗色主题按钮样式 */
+[data-theme="dark"] .btn-secondary,
+.dark .btn-secondary {
+  background-color: var(--color-surface) !important;
+  color: var(--color-text) !important;
+  border-color: var(--color-border) !important;
+}
+
+[data-theme="dark"] .btn-secondary:hover,
+.dark .btn-secondary:hover {
+  background-color: var(--color-background) !important;
+}
+
+/* 特殊处理包含特定类名的按钮 */
+[data-theme="dark"] .bg-white,
+[data-theme="dark"] button[class*="bg-white"],
+.dark .bg-white,
+.dark button[class*="bg-white"] {
+  background-color: var(--color-surface) !important;
+  color: var(--color-text) !important;
+}
+
+[data-theme="dark"] .hover\\:bg-gray-50:hover,
+.dark .hover\\:bg-gray-50:hover {
+  background-color: var(--color-background) !important;
+}
+
+/* 确保所有按钮文字在暗色主题下可见 */
+[data-theme="dark"] button,
+.dark button,
+[data-theme="dark"] a,
+.dark a {
+  color: var(--color-text) !important;
+}
+
+/* 暗色主题下的按钮文字颜色 */
+[data-theme="dark"] button.bg-gray-200,
+[data-theme="dark"] button.text-gray-900,
+.dark button.bg-gray-200,
+.dark button.text-gray-900,
+[data-theme="dark"] button[class*="secondary"],
+.dark button[class*="secondary"] {
+  color: var(--color-text) !important;
+}
+
+/* 白色背景按钮在暗色主题下 */
+[data-theme="dark"] button.bg-white,
+.dark button.bg-white,
+[data-theme="dark"] a.bg-white,
+.dark a.bg-white {
+  color: var(--color-text) !important;
+  background-color: var(--color-surface) !important;
+}
+
+/* 主题相关的渐变色 */
+.from-primary-50 {
+  --tw-gradient-from: var(--color-primary);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgb(255 255 255 / 0));
+}
+
+.from-primary-500 {
+  --tw-gradient-from: var(--color-primary);
+}
+
+.to-secondary-50 {
+  --tw-gradient-to: var(--color-secondary);
+}
+
+.to-secondary-500 {
+  --tw-gradient-to: var(--color-secondary);
+}
+
+.bg-primary-50 {
+  background-color: color-mix(in srgb, var(--color-primary) 10%, transparent);
+}
+
+.bg-primary-100 {
+  background-color: color-mix(in srgb, var(--color-primary) 20%, transparent);
+}
+
+.text-primary-600 {
+  color: var(--color-primary);
+}
+
+/* 暗色主题适配 */
+[data-theme="dark"] .bg-gray-50 {
+  background-color: var(--color-surface);
+}
+
+/* 主题过渡动画 */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* MDX Editor custom styles for better WYSIWYG experience */
+.mdx-editor {
+  min-height: 400px;
+}
+
+.mdx-editor .mdx-editor-content {
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* Custom MDX Editor styles to improve WYSIWYG experience */
+/* Ensure proper styling for MDX Editor in edit mode */
+.mdx-editor {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+  font-size: 16px !important;
+  line-height: 1.6 !important;
+  color: #1a202c !important;
+}
+
+/* Headings - make them look right in edit mode */
+.mdx-editor .mdx-editor-heading {
+  font-weight: 600 !important;
+  color: #1a202c !important;
+  margin-bottom: 0.5em !important;
+  margin-top: 0.5em !important;
+}
+
+.mdx-editor .mdx-editor-h1 {
+  font-size: 2.25em !important;
+  line-height: 1.25 !important;
+  margin-top: 0 !important;
+  margin-bottom: 0.5em !important;
+  padding-top: 0.5em !important;
+  border-bottom: 2px solid #e5e7eb !important;
+}
+
+.mdx-editor .mdx-editor-h2 {
+  font-size: 1.875em !important;
+  line-height: 1.25 !important;
+  margin-top: 1.5em !important;
+  margin-bottom: 0.5em !important;
+}
+
+.mdx-editor .mdx-editor-h3 {
+  font-size: 1.5em !important;
+  line-height: 1.25 !important;
+  margin-top: 1.25em !important;
+  margin-bottom: 0.5em !important;
+}
+
+.mdx-editor .mdx-editor-h4 {
+  font-size: 1.25em !important;
+  line-height: 1.25 !important;
+  margin-top: 1em !important;
+  margin-bottom: 0.5em !important;
+}
+
+.mdx-editor .mdx-editor-h5 {
+  font-size: 1.125em !important;
+  line-height: 1.25 !important;
+  margin-top: 0.875em !important;
+  margin-bottom: 0.5em !important;
+}
+
+.mdx-editor .mdx-editor-h6 {
+  font-size: 1em !important;
+  line-height: 1.25 !important;
+  margin-top: 0.75em !important;
+  margin-bottom: 0.5em !important;
+}
+
+/* Paragraphs - reduce spacing */
+.mdx-editor .mdx-editor-paragraph {
+  margin-bottom: 0.25em !important;
+  margin-top: 0.25em !important;
+  line-height: 1.6 !important;
+}
+
+/* Fix spacing after paragraphs */
+.mdx-editor .mdx-editor-paragraph + .mdx-editor-paragraph {
+  margin-top: 0.5em !important;
+}
+
+/* Remove empty paragraphs spacing */
+.mdx-editor .mdx-editor-paragraph:empty {
+  margin: 0 !important;
+  padding: 0 !important;
+  height: 0 !important;
+}
+
+/* Ensure proper line breaks */
+.mdx-editor .cm-line {
+  min-height: 1.6em !important;
+}
+
+.mdx-editor .cm-content {
+  padding: 1rem !important;
+  line-height: 1.6 !important;
+}
+
+/* Lists */
+.mdx-editor .mdxeditor-list-item-task {
+  list-style: none !important;
+  min-height: 1.5em !important;
+}
+
+.mdx-editor .mdxeditor-list-item-task-inner {
+  display: flex !important;
+  align-items: flex-start !important;
+}
+
+.mdx-editor .mdxeditor-list-item-task-checkbox {
+  margin-right: 0.5em !important;
+  margin-top: 0.25em !important;
+}
+
+/* Code blocks */
+.mdx-editor .mdx-editor-codeblock {
+  background-color: #f1f5f9 !important;
+  border-radius: 0.375rem !important;
+  padding: 0.75rem !important;
+  font-family: ui-monospace, SFMono, "Cascadia Code", "Source Code Pro", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
+  font-size: 0.875em !important;
+  line-height: 1.25 !important;
+  overflow-x: auto !important;
+  margin: 1em 0 !important;
+}
+
+.mdx-editor .mdxeditor-codeblock-content {
+  color: #1e293b !important;
+}
+
+/* Inline code */
+.mdx-editor .mdxeditor-codeinline {
+  background-color: #f1f5f9 !important;
+  border-radius: 0.25rem !important;
+  padding: 0.125rem 0.25rem !important;
+  font-family: ui-monospace, SFMono, "Cascadia Code", "Source Code Pro", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
+  font-size: 0.875em !important;
+}
+
+/* Links */
+.mdx-editor .mdxeditor-link {
+  color: #3b82f6 !important;
+  text-decoration: underline !important;
+}
+
+.mdx-editor .mdxeditor-link:hover {
+  color: #2563eb !important;
+}
+
+/* Blockquotes */
+.mdx-editor .mdxeditor-blockquote {
+  border-left: 4px solid #e5e7eb !important;
+  padding-left: 1rem !important;
+  margin: 1em 0 !important;
+  font-style: italic !important;
+  color: #6b7280 !important;
+}
+
+/* Tables */
+.mdx-editor .mdxeditor-table {
+  border-collapse: collapse !important;
+  width: 100% !important;
+  margin: 1em 0 !important;
+}
+
+.mdx-editor .mdxeditor-table-th {
+  border-bottom: 2px solid #e5e7eb !important;
+  font-weight: 600 !important;
+  padding: 0.5rem 1rem !important;
+  text-align: left !important;
+}
+
+.mdx-editor .mdxeditor-table-td {
+  border-bottom: 1px solid #e5e7eb !important;
+  padding: 0.5rem 1rem !important;
+}
+
+/* Thematic breaks */
+.mdx-editor .mdxeditor-thematicbreak {
+  border: none !important;
+  border-top: 2px solid #e5e7eb !important;
+  margin: 2em 0 !important;
+}
+
+/* Images */
+.mdx-editor .mdxeditor-image {
+  max-width: 100% !important;
+  height: auto !important;
+  border-radius: 0.375rem !important;
+  margin: 0.5em 0 !important;
+}
+
+/* Remove extra margins that MDX Editor adds */
+.mdx-editor p:empty {
+  display: none !important;
+}
+
+.mdx-editor h1:empty, .mdx-editor h2:empty, .mdx-editor h3:empty, .mdx-editor h4:empty, .mdx-editor h5:empty, .mdx-editor h6:empty {
+  display: none !important;
+}
+
+/* Better list spacing */
+.mdx-editor ul, .mdx-editor ol {
+  padding-left: 1.5rem !important;
+  margin-bottom: 0.5em !important;
+}
+
+.mdx-editor li {
+  margin-bottom: 0.25em !important;
+  line-height: 1.6 !important;
+}
+
+/* Code block after headings */
+.mdx-editor h1 + .mdxeditor-codeblock, .mdx-editor h2 + .mdxeditor-codeblock, .mdx-editor h3 + .mdxeditor-codeblock {
+  margin-top: 0.75em !important;
+}
+
+/* Make editor look more natural */
+.mdx-editor .mdxeditor-content {
+  outline: none !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+/* Additional styles for better WYSIWYG */
+.mdx-editor .cm-content {
+  padding: 1rem !important;
+  font-size: 16px !important;
+  line-height: 1.6 !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+}
+
+.mdx-editor .cm-editor {
+  font-size: 16px !important;
+  line-height: 1.6 !important;
+}
+
+/* Ensure proper spacing between elements */
+.mdx-editor .cm-line {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Make the editor container match the preview styles */
+.mdx-editor {
+  border: 1px solid #e5e7eb !important;
+  border-radius: 0.5rem !important;
+  background-color: white !important;
+}
+
+/* Focus styles */
+.mdx-editor:focus-within {
+  outline: none !important;
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+}

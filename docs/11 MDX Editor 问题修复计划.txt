@@ -1,0 +1,165 @@
+ MDX Editor 问题修复计划
+
+ 问题描述
+
+ 1. 空行问题：编辑器中空行会添加过多的换行符（\n\n\n），导致文字相隔很远
+ 2. 转义问题：粘贴带有**标记的文本时，不会渲染成粗体，反而添加了很多反斜杠转义符
+
+ 用户需求
+
+ - 保持MDX Editor v3.11.3版本
+ - 如果无法解决，愿意考虑更换为TipTap编辑器
+
+ 方案一：优化MDX Editor配置（优先尝试）
+
+ 1. 增强markdown-cleaner.ts
+
+ // src/lib/markdown-cleaner.ts
+ export function aggressiveClean(text: string): string {
+   // 更彻底的清理逻辑
+   return text
+     // 1. 处理多余的换行符
+     .replace(/\n{3,}/g, '\n\n')
+     // 2. 移除所有Markdown标记前的转义符
+     .replace(/\\(\*|`|_|#|\\|\[|\])/g, '$1')
+     // 3. 修复特殊组合
+     .replace(/\\\*\\\*/g, '**')
+     // 4. 移除行尾多余空格
+     .replace(/[ \t]+$/gm, '')
+     // 5. 确保文档开头和结尾没有空行
+     .replace(/^\n+|\n+$/g, '')
+ }
+
+ 2. 优化DiaryEditorMDX.tsx配置
+
+ <MDXEditor
+   markdown={content}
+   onChange={handleChange}
+   escapeUnknownTextDirectives={true}
+   trim={false}
+   toMarkdownOptions={{
+     rule: '-',
+     bullet: '-',
+     listItemIndent: 'one',
+     tightListItems: true
+   }}
+   plugins={[
+     // ...其他插件
+     codeMirrorPlugin({
+       codeMirrorOptions: {
+         lineWrapping: true,
+         scrollbarStyle: null
+       }
+     })
+   ]}
+ />
+
+ 3. 改进事件处理
+
+ // 使用更可靠的粘贴处理
+ const handlePaste = useCallback((e: React.ClipboardEvent) => {
+   e.preventDefault()
+   const text = e.clipboardData.getData('text/plain')
+   const cleaned = aggressiveClean(text)
+   document.execCommand('insertText', false, cleaned)
+ }, [])
+
+ 方案二：迁移到TipTap（备选方案）
+
+ 1. 安装依赖
+
+ npm install @tiptap/react @tiptap/starter-kit @tiptap/extension-placeholder @tiptap/extension-image
+
+ 2. 创建TipTap编辑器组件
+
+ // src/components/editor/DiaryEditorTipTap.tsx
+ import { useEditor } from '@tiptap/react'
+ import StarterKit from '@tiptap/starter-kit'
+
+ // 支持Markdown输入和输出
+ export default function DiaryEditorTipTap({ value, onChange }) {
+   const editor = useEditor({
+     extensions: [
+       StarterKit,
+       Placeholder.configure({
+         placeholder: '开始写日记吧...'
+       })
+     ],
+     content: markdownToHtml(value),
+     onUpdate: ({ editor }) => {
+       const html = editor.getHTML()
+       onChange(htmlToMarkdown(html))
+     }
+   })
+
+   return <EditorContent editor={editor} />
+ }
+
+ 3. Markdown转换工具
+
+ // src/lib/markdown-converter.ts
+ import { marked } from 'marked'
+ import TurndownService from 'turndown'
+
+ const turndownService = new TurndownService({
+   headingStyle: 'atx',
+   bulletListMarker: '-',
+   codeBlockStyle: 'fenced'
+ })
+
+ export function markdownToHtml(markdown: string): string {
+   return marked(markdown)
+ }
+
+ export function htmlToMarkdown(html: string): string {
+   return turndownService.turndown(html)
+ }
+
+ 实施步骤
+
+ 1. 第一阶段（MDX优化）
+   - 增强markdown-cleaner.ts的清理逻辑
+   - 更新DiaryEditorMDX.tsx的配置选项
+   - 改进粘贴和输入事件处理
+   - 测试并验证修复效果
+ 2. 第二阶段（TipTap迁移 - 如需要）
+   - 安装TipTap相关依赖
+   - 创建TipTap编辑器组件
+   - 实现Markdown转换功能
+   - 更新页面组件使用新编辑器
+   - 数据迁移（现有Markdown内容保持兼容）
+
+ 关键文件修改列表
+
+ 1. src/lib/markdown-cleaner.ts - 增强清理功能
+ 2. src/components/editor/DiaryEditorMDX.tsx - 优化配置
+ 3. src/app/diary/new/page.tsx - 更新导入（如果换编辑器）
+ 4. src/app/diary/[id]/edit/page.tsx - 更新导入（如果换编辑器）
+ 5. package.json - 添加新依赖（如果换编辑器）
+
+ 测试要点
+
+ 1. 空行测试：
+   - 输入多个空行，验证是否只保留2个换行符
+   - 粘贴带有多个空行的文本
+ 2. Markdown标记测试：
+   - 粘贴**粗体**文本，验证是否正确渲染
+   - 测试所有Markdown语法（#标题、斜体、代码等）
+ 3. 兼容性测试：
+   - 确保现有日记数据正常显示
+   - 测试编辑和保存功能
+
+ 预期结果
+
+ 1. 成功方案一：MDX Editor正常工作，无转义问题，空行合理
+ 2. 成功方案二：平滑迁移到TipTap，保持所有功能不变
+
+ 风险评估
+
+ 1. 方案一风险：
+   - 可能无法完全解决MDX Editor的内部处理问题
+   - 需要仔细测试各种输入场景
+ 2. 方案二风险：
+   - 需要学习TipTap的API
+   - 可能需要调整UI样式
+   - 确保Markdown转换的准确性

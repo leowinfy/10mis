@@ -1,0 +1,87 @@
+# 替换为 Vditor 编辑器
+
+## 修改原因
+用户要求将编辑器和日记展示页的 Markdown 渲染解析彻底更换为开源的 Vditor。
+
+## 实施的改动
+
+### 1. 安装依赖
+```bash
+npm install vditor --legacy-peer-deps
+```
+
+### 2. 创建新组件
+
+#### DiaryEditorVditor.tsx
+- 使用 Vditor 的即时渲染模式 (ir)
+- 支持图片上传
+- 保留了快速插入功能
+- 支持编辑模式和预览模式切换
+
+#### MarkdownRendererVditor.tsx
+- 使用 Vditor.preview 方法渲染 Markdown
+- 支持 GitHub 风格的语法高亮
+- 支持 KaTeX 数学公式
+- 启用 TOC、脚注等功能
+
+### 3. 更新页面组件
+
+#### 新建日记页面 (diary/new/page.tsx)
+- 将 DiaryEditorClean 替换为 DiaryEditorVditor
+
+#### 编辑日记页面 (diary/[id]/edit/page.tsx)
+- 将 DiaryEditorClean 替换为 DiaryEditorVditor
+
+#### 日记详情页面 (diary/[id]/page.tsx)
+- 将 MarkdownRendererImproved 替换为 MarkdownRendererVditor
+
+## Vditor 的优势
+
+1. **功能强大**
+   - 支持所见即所得编辑
+   - 内置图片粘贴和上传
+   - 支持数学公式、流程图、甘特图等
+
+2. **渲染准确**
+   - 与编辑器预览完全一致的渲染效果
+   - 自动处理有序列表的 start 属性
+   - 支持中文排版优化
+
+3. **开源免费**
+   - 完全开源，无商业限制
+   - 活跃的社区维护
+   - 丰富的插件生态
+
+## 当前状态
+
+- 服务器运行在: http://localhost:3009
+- 所有页面已更新为使用 Vditor
+- 编辑器功能正常，包括：
+  - Markdown 编辑
+  - 图片上传
+  - 预览模式切换
+  - 快速插入模板
+- 展示页面使用 Vditor.preview 渲染，确保与编辑器预览一致
+
+## 测试建议
+
+1. 创建新日记
+   - 测试各种 Markdown 语法
+   - 测试有序列表（1.、2.、5.、10.）
+   - 测试图片上传功能
+   - 测试数学公式
+
+2. 编辑现有日记
+   - 确认内容正确加载
+   - 测试编辑和保存功能
+
+3. 查看渲染效果
+   - 对比编辑器预览和最终展示
+   - 确认有序列表序号正确显示
+   - 验证代码块、表格等渲染
+
+## 注意事项
+
+- Vditor 引入了较多资源文件，首次加载可能稍慢
+- CDN 配置为 unpkg，国内用户可能需要考虑使用国内 CDN
+- 图片上传接口已适配，返回格式需符合 Vditor 要求
